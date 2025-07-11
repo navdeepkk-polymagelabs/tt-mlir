@@ -631,7 +631,23 @@ public:
         rewriter.create<emitc::LiteralOp>(op->getLoc(), resultTypes, varName);
 
     rewriter.replaceOp(op, literalOp.getResult());
+    return success();
+  }
+};
 
+class DecomposeArithMinSIOp : public OpConversionPattern<arith::MinSIOp> {
+public:
+  using OpConversionPattern<arith::MinSIOp>::OpConversionPattern;
+  LogicalResult
+  matchAndRewrite(arith::MinSIOp op, OpAdaptor adaptor,
+                  ConversionPatternRewriter &rewriter) const final {
+    // Decompose arith.minsi into arith.cmpi and arith.select op.
+    auto loc = op.getLoc();
+    auto cmpOp = rewriter.create<arith::CmpIOp>(
+        loc, arith::CmpIPredicate::slt, adaptor.getLhs(), adaptor.getRhs());
+    auto selectOp = rewriter.create<arith::SelectOp>(
+        loc, cmpOp.getResult(), adaptor.getLhs(), adaptor.getRhs());
+    rewriter.replaceOp(op, selectOp.getResult());
     return success();
   }
 };
@@ -682,7 +698,8 @@ public:
     populateMemRefToEmitCConversionPatterns(patterns, typeConverter);
 
     patterns.add<
-        TTKernelToEmitCGetCompileArgValRewriter, TTKernelToEmitCDPrintRewriter,
+        DecomposeArithMinSIOp, TTKernelToEmitCGetCompileArgValRewriter,
+        TTKernelToEmitCDPrintRewriter,
         TTKernelToEmitCPassthroughRewriter<ttkernel::CBReinterpretShapeOp>,
         TTKernelMacroOpToEmitCOpRewriter<ttkernel::MemZerosBaseOp>,
         TTKernelMacroOpToEmitCOpRewriter<ttkernel::MemZerosSizeOp>,

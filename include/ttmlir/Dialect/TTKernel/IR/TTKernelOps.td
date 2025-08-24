@@ -678,6 +678,37 @@ def TTKernel_ExpTileOp : TTKernel_SFPUOp<"exp_tile", [TTKernel_UnaryOpTrait]> {
     }];
 }
 
+def TTKernel_TransposeWhDestInitShortOp : TTKernel_InitOp<"transpose_wh_dest_init_short"> {
+    let summary = "Short init function which configures compute unit for execution of transpose_wh_dest.";
+    let description = [{
+      Must be run before transpose_wh_dest.
+    }];
+
+    let arguments = (ins DefaultValuedAttr<BoolAttr, "false">:$is_32bit);
+
+    let assemblyFormat = [{
+      `(` $is_32bit `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
+def TTKernel_TransposeWhDstOp : TTKernel_SFPUOp<"transpose_wh_dest",
+                                                [TTKernel_UnaryOpTrait]> {
+    let summary = "Transpose operation.";
+    let description = [{
+      Performs a 32x32 in place transpose operation *B[w,h] = A[h,w]* on a tile
+      in the DST register at tile_index. The DST register buffer must be in acquired
+      state via *acquire_dst* call. This call is blocking and is only available
+      on the compute engine.
+    }];
+
+    let arguments = (ins IndexLike:$tile_index,
+                         DefaultValuedAttr<BoolAttr, "false">:$is_32bit);
+
+    let assemblyFormat = [{
+      `(` $tile_index `,` $is_32bit `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
 def TTKernel_LogTileInitOp : TTKernel_InitOp<"log_tile_init"> {
     let summary = "Short init function which configures compute unit for execution of log_tile.";
     let description = [{

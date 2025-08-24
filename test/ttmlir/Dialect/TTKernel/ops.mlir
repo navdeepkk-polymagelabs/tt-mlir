@@ -79,3 +79,18 @@ func.func @test_copy_dest_values() -> () {
   // CHECK: ttkernel.copy_dest_values(%{{.*}}, %{{.*}}) : (index, index) -> ()
   return
 }
+
+// CHECK-LABEL: func.func @test_transpose_wh_dest_init_short
+func.func @test_transpose_wh_dest_init_short() -> () {
+  // CHECK: ttkernel.transpose_wh_dest_init_short(true) : () -> ()
+  ttkernel.transpose_wh_dest_init_short(true) : () -> ()
+  return
+}
+
+// CHECK-LABEL: func.func @test_transpose_wh_dest
+func.func @test_transpose_wh_dest() -> () {
+  %c0 = arith.constant 0 : index
+  ttkernel.transpose_wh_dest(%c0, true) : (index) -> ()
+  // CHECK: ttkernel.transpose_wh_dest(%{{.*}}, true) : (index) -> ()
+  return
+}

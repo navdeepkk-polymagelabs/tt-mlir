@@ -320,6 +320,18 @@ public:
 
       template_args.push_back(packTileOp.getOutOfOrderAttr());
       return ArrayAttr::get(op.getContext(), template_args);
+    } else if constexpr (std::is_same_v<SourceOp,
+                                        ttkernel::TransposeWhDestInitShortOp>) {
+      auto transposeWhDestInitShortOp =
+          mlir::cast<ttkernel::TransposeWhDestInitShortOp>(op);
+      SmallVector<Attribute, 1> template_args;
+      template_args.push_back(transposeWhDestInitShortOp.getIs_32bitAttr());
+      return ArrayAttr::get(op.getContext(), template_args);
+    } else if constexpr (std::is_same_v<SourceOp, ttkernel::TransposeWhDstOp>) {
+      auto transposeWhDstOp = mlir::cast<ttkernel::TransposeWhDstOp>(op);
+      SmallVector<Attribute, 1> template_args;
+      template_args.push_back(transposeWhDstOp.getIs_32bitAttr());
+      return ArrayAttr::get(op.getContext(), template_args);
     } else if constexpr (std::is_same_v<SourceOp, ttkernel::TypecastTileOp>) {
       SmallVector<Attribute, 2> template_args;
       template_args.push_back(
@@ -805,6 +817,8 @@ public:
         TTKernelToEmitCOpaqueRewriter<ttkernel::SinTileOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::TanTileInitOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::TanTileOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::TransposeWhDestInitShortOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::TransposeWhDstOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::TypecastTileInitOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::TypecastTileOp>,
 

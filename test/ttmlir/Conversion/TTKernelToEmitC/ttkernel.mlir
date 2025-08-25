@@ -764,6 +764,22 @@ module {
       "ttkernel.fill_tile"(%dst_index, %val) : (i32, f32) -> ()
       return
     }
+
+    // CHECK-LABEL: func.func @test_transpose_wh_dest_init_short
+    func.func @test_transpose_wh_dest_init_short() -> () attributes {ttkernel.thread = #ttkernel.thread<compute>} {
+      // CHECK: emitc.call_opaque "transpose_wh_dest_init_short"() {template_args = [true]} : () -> ()
+      ttkernel.transpose_wh_dest_init_short(true) : () -> ()
+      return
+    }
+
+    // CHECK-LABEL: func.func @test_transpose_wh_dest
+    func.func @test_transpose_wh_dest() -> () attributes {ttkernel.thread = #ttkernel.thread<compute>} {
+      %c0 = arith.constant 0 : index
+      ttkernel.transpose_wh_dest(%c0, false) : (index) -> ()
+      // CHECK: emitc.call_opaque "transpose_wh_dest"(%{{.*}}) {template_args = [false]} : (!emitc.size_t) -> ()
+      return
+    }
+
   } // module
 
   //===----------------------------------------------------------------------===//

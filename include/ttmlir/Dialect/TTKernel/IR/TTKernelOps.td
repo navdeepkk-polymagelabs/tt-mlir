@@ -1724,6 +1724,38 @@ def TTKernel_MyYOp : TTKernel_Op<"my_y"> {
     }];
 }
 
+def TTKernel_GetAbsoluteLogicalXOp : TTKernel_Op<"get_absolute_logical_x"> {
+    let summary = "Returns the absolute logical X coordinate value that"
+                  "this kernel is running on.";
+    let description = [{
+      Returns the absolute logical X coordinate value that this kernel
+      is running on. The absolute coordinate is the one relative to the
+      origin of the physical grid.
+    }];
+
+    let results = (outs I8:$x);
+
+    let assemblyFormat = [{
+      attr-dict `:` functional-type(operands, results)
+    }];
+}
+
+def TTKernel_GetAbsoluteLogicalYOp : TTKernel_Op<"get_absolute_logical_y"> {
+    let summary = "Returns the absolute logical Y coordinate value that"
+                  "this kernel is running on.";
+    let description = [{
+      Returns the absolute logical Y coordinate value that this kernel
+      is running on. The absolute coordinate is the one relative to the
+      origin of the physical grid.
+    }];
+
+    let results = (outs I8:$y);
+
+    let assemblyFormat = [{
+      attr-dict `:` functional-type(operands, results)
+    }];
+}
+
 //===----------------------------------------------------------------------===//
 // TTKernel Multicast NoC operations
 //===----------------------------------------------------------------------===//

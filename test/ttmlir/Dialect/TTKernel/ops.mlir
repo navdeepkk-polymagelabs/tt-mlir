@@ -94,3 +94,19 @@ func.func @test_transpose_wh_dest() -> () {
   // CHECK: ttkernel.transpose_wh_dest(%{{.*}}, true) : (index) -> ()
   return
 }
+
+// CHECK-LABEL: func.func @test_get_absolute_logical_x
+func.func @test_get_absolute_logical_x() -> (i8) {
+  // CHECK: %[[X:.*]] = ttkernel.get_absolute_logical_x : () -> i8
+  // CHECK: return %[[X]] : i8
+  %0 = ttkernel.get_absolute_logical_x : () -> i8
+  return %0 : i8
+}
+
+// CHECK-LABEL: func.func @test_get_absolute_logical_y
+func.func @test_get_absolute_logical_y() -> (i8) {
+  // CHECK: %[[Y:.*]] = ttkernel.get_absolute_logical_y : () -> i8
+  // CHECK: return %[[Y]] : i8
+  %0 = ttkernel.get_absolute_logical_y : () -> i8
+  return %0 : i8
+}

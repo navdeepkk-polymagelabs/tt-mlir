@@ -833,6 +833,8 @@ public:
         TTKernelToEmitCOpaqueRewriter<ttkernel::NocAsyncWriteOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::NocAsyncWriteTileOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::NocAsyncWriteBarrierOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::GetAbsoluteLogicalXOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::GetAbsoluteLogicalYOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::GetNocMulticastAddrOp>,
         TTKernelToEmitCOpaqueRewriter<
             ttkernel::ExperimentalGetNocMulticastAddrOp>,

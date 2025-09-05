@@ -914,11 +914,51 @@ module {
   } // module
 
   //===----------------------------------------------------------------------===//
+  // TTKernel compute operations
+  //===----------------------------------------------------------------------===//
+
+  // CHECK-LABEL: ttkernel_compute_operations
+  module @ttkernel_compute_operations {
+
+    // CHECK-LABEL: func.func @test_get_absolute_logical_x
+    func.func @test_get_absolute_logical_x() -> (i8) attributes {ttkernel.thread = #ttkernel.thread<compute>} {
+      // CHECK: %[[X:.*]] = emitc.call_opaque "get_absolute_logical_x"() : () -> i8
+      // CHECK: return %[[X]] : i8
+      %0 = ttkernel.get_absolute_logical_x : () -> i8
+      return %0 : i8
+    }
+
+    // CHECK-LABEL: func.func @test_get_absolute_logical_y
+    func.func @test_get_absolute_logical_y() -> (i8) attributes {ttkernel.thread = #ttkernel.thread<compute>}{
+      // CHECK: %[[Y:.*]] = emitc.call_opaque "get_absolute_logical_y"() : () -> i8
+      // CHECK: return %[[Y]] : i8
+      %0 = ttkernel.get_absolute_logical_y : () -> i8
+      return %0 : i8
+    }
+  } // module
+
+  //===----------------------------------------------------------------------===//
   // TTKernel NOC operations
   //===----------------------------------------------------------------------===//
 
   // CHECK-LABEL: ttkernel_noc_operations
   module @ttkernel_noc_operations {
+
+    // CHECK-LABEL: func.func @test_get_absolute_logical_x
+    func.func @test_get_absolute_logical_x() -> (i8) attributes {ttkernel.thread = #ttkernel.thread<noc>} {
+      // CHECK: %[[X:.*]] = emitc.call_opaque "get_absolute_logical_x"() : () -> i8
+      // CHECK: return %[[X]] : i8
+      %0 = ttkernel.get_absolute_logical_x : () -> i8
+      return %0 : i8
+    }
+
+    // CHECK-LABEL: func.func @test_get_absolute_logical_y
+    func.func @test_get_absolute_logical_y() -> (i8) attributes {ttkernel.thread = #ttkernel.thread<noc>}{
+      // CHECK: %[[Y:.*]] = emitc.call_opaque "get_absolute_logical_y"() : () -> i8
+      // CHECK: return %[[Y]] : i8
+      %0 = ttkernel.get_absolute_logical_y : () -> i8
+      return %0 : i8
+    }
 
     // CHECK-LABEL: func @get_noc_addr
     func.func @get_noc_addr() -> () attributes {ttkernel.thread = #ttkernel.thread<noc>} {

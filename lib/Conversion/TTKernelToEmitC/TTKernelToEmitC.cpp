@@ -284,14 +284,24 @@ public:
       StringRef reduceType, reduceDim;
       if (mlir::isa<ttkernel::ReduceInitOp>(op)) {
         auto reduceInitOp = mlir::cast<ttkernel::ReduceInitOp>(op);
-        template_args.push_back(emitc::OpaqueAttr::get(
-            op.getContext(), "true")); // "fp32_transpose" template argument
         std::tie(reduceType, reduceDim) =
             getReduceTypeAndDim<ttkernel::ReduceInitOp>(reduceInitOp);
+        template_args.push_back(
+            emitc::OpaqueAttr::get(op.getContext(), reduceType));
+        template_args.push_back(
+            emitc::OpaqueAttr::get(op.getContext(), reduceDim));
+        template_args.push_back(emitc::OpaqueAttr::get(
+            op.getContext(), reduceInitOp.getFullFp32() ? "true" : "false"));
       } else {
         auto reduceOp = mlir::cast<ttkernel::ReduceTileOp>(op);
         std::tie(reduceType, reduceDim) =
             getReduceTypeAndDim<ttkernel::ReduceTileOp>(reduceOp);
+        template_args.push_back(
+            emitc::OpaqueAttr::get(op.getContext(), reduceType));
+        template_args.push_back(
+            emitc::OpaqueAttr::get(op.getContext(), reduceDim));
+        template_args.push_back(emitc::OpaqueAttr::get(
+            op.getContext(), reduceOp.getFullFp32() ? "true" : "false"));
       }
       template_args.push_back(
           emitc::OpaqueAttr::get(op.getContext(), reduceType));

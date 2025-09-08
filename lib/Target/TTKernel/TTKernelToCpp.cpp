@@ -37,6 +37,9 @@ public:
     }
     builder->create<emitc::IncludeOp>(loc, "cstdint",
                                       /*isStandard=*/true);
+    // Required to handle infinity constants.
+    builder->create<emitc::IncludeOp>(loc, "limits",
+                                      /*isStandard=*/true);
 
     emitDebugPrint();
 

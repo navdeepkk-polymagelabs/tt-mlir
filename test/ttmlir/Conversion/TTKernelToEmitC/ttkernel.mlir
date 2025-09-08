@@ -765,6 +765,15 @@ module {
       return
     }
 
+    // CHECK-LABEL: func @infinity_constant
+    func.func @infinity_constant() -> (f32, f32) attributes {ttkernel.thread = #ttkernel.thread<compute>} {
+      %neg_inf = arith.constant 0xFF800000 : f32
+      // CHECK: emitc.literal "-std::numeric_limits<float>::infinity()" : f32
+      %pos_inf = arith.constant 0x7F800000 : f32
+      // CHECK: emitc.literal "std::numeric_limits<float>::infinity()" : f32
+      return %neg_inf, %pos_inf : f32, f32
+    }
+
     // CHECK-LABEL: func.func @test_transpose_wh_dest_init_short
     func.func @test_transpose_wh_dest_init_short() -> () attributes {ttkernel.thread = #ttkernel.thread<compute>} {
       // CHECK: emitc.call_opaque "transpose_wh_dest_init_short"() {template_args = [true]} : () -> ()

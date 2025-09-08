@@ -285,7 +285,7 @@ public:
       if (mlir::isa<ttkernel::ReduceInitOp>(op)) {
         auto reduceInitOp = mlir::cast<ttkernel::ReduceInitOp>(op);
         template_args.push_back(emitc::OpaqueAttr::get(
-            op.getContext(), "true")); // "at_start" template argument
+            op.getContext(), "true")); // "fp32_transpose" template argument
         std::tie(reduceType, reduceDim) =
             getReduceTypeAndDim<ttkernel::ReduceInitOp>(reduceInitOp);
       } else {
@@ -647,6 +647,29 @@ public:
   }
 };
 
+/// Lowers arith.constant infinity to std::numeric_limits<float>::infinity().
+class LowerArithConstInfinity : public OpConversionPattern<arith::ConstantOp> {
+public:
+  using OpConversionPattern<arith::ConstantOp>::OpConversionPattern;
+  LogicalResult
+  matchAndRewrite(arith::ConstantOp op, OpAdaptor adaptor,
+                  ConversionPatternRewriter &rewriter) const final {
+    // Replace arith.constant infinity with
+    // std::numeric_limits<float>::infinity().
+    if (FloatAttr floatAttr = dyn_cast<FloatAttr>(op.getValue())) {
+      if (floatAttr.getValue().isInfinity()) {
+        rewriter.replaceOpWithNewOp<emitc::LiteralOp>(
+            op, getTypeConverter()->convertType(op.getType()),
+            floatAttr.getValue().isNegInfinity()
+                ? "-std::numeric_limits<float>::infinity()"
+                : "std::numeric_limits<float>::infinity()");
+        return success();
+      }
+    }
+    return failure();
+  }
+};
+
 class DecomposeArithMinSIOp : public OpConversionPattern<arith::MinSIOp> {
 public:
   using OpConversionPattern<arith::MinSIOp>::OpConversionPattern;
@@ -708,6 +731,13 @@ public:
     populateSCFToEmitCConversionPatterns(patterns, typeConverter);
     populateMemRefToEmitCTypeConversion(typeConverter);
     populateMemRefToEmitCConversionPatterns(patterns, typeConverter);
+
+    // Lower arith.constant infinity to std::numeric_limits<float>::infinity().
+    // This is bacause the default lowering to emitc.constant inturn get lowered
+    // to "INFINITY" constant which requries including <cmath> header and that
+    // header is in conflict with entities in llk_sfpu_types.h header.
+    patterns.add<LowerArithConstInfinity>(typeConverter, funcOp.getContext(),
+                                          PatternBenefit(1000));
 
     patterns.add<
         DecomposeArithMinSIOp, TTKernelToEmitCGetCompileArgValRewriter,

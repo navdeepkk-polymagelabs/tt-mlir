@@ -110,3 +110,33 @@ func.func @test_get_absolute_logical_y() -> (i8) {
   %0 = ttkernel.get_absolute_logical_y : () -> i8
   return %0 : i8
 }
+
+// CHECK-LABEL: func.func @test_unary_bcast_init
+func.func @test_unary_bcast_init() -> () attributes {ttkernel.arg_spec = #ttkernel.arg_spec< ct_args = [<arg_type = cb_port, operand_index = 0>, <arg_type = cb_port, operand_index = 1>]>} {
+  %input = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1_>>
+  %output = ttkernel.get_compile_time_arg_val(1) : () -> !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1_>>
+  ttkernel.unary_bcast_init(%input, %output, <bcast_dim_col>) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1_>>, !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1_>>) -> ()
+  ttkernel.unary_bcast_init(%input, %output, <bcast_dim_row>) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1_>>, !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1_>>) -> ()
+  ttkernel.unary_bcast_init(%input, %output, <bcast_dim_scalar>) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1_>>, !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1_>>) -> ()
+  // CHECK: %[[IN:.*]] = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1>>
+  // CHECK: %[[OUT:.*]] = ttkernel.get_compile_time_arg_val(1) : () -> !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1>>
+  // CHECK: ttkernel.unary_bcast_init(%[[IN]], %[[OUT]], <bcast_dim_col>) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1>>, !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1>>) -> ()
+  // CHECK: ttkernel.unary_bcast_init(%[[IN]], %[[OUT]], <bcast_dim_row>) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1>>, !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1>>) -> ()
+  // CHECK: ttkernel.unary_bcast_init(%[[IN]], %[[OUT]], <bcast_dim_scalar>) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1>>, !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, f32>, #l1>>) -> ()
+  return
+}
+
+// CHECK-LABEL: func.func @test_unary_bcast
+func.func @test_unary_bcast() -> () attributes {ttkernel.arg_spec = #ttkernel.arg_spec< ct_args = [<arg_type = cb_port, operand_index = 0>, <arg_type = cb_port, operand_index = 1>]>} {
+  %input = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>
+  %c0 = arith.constant 0 : index
+  ttkernel.unary_bcast(%input, %c0, %c0, <bcast_dim_col>) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>, index, index) -> ()
+  ttkernel.unary_bcast(%input, %c0, %c0, <bcast_dim_row>) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>, index, index) -> ()
+  ttkernel.unary_bcast(%input, %c0, %c0, <bcast_dim_scalar>) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>, index, index) -> ()
+  // CHECK:  %[[IN:.*]] = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>
+  // CHECK:  %[[INX:.*]] = arith.constant 0 : index
+  // CHECK:  ttkernel.unary_bcast(%[[IN]], %[[INX]], %[[INX]], <bcast_dim_col>) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>, index, index) -> ()
+  // CHECK:  ttkernel.unary_bcast(%[[IN]], %[[INX]], %[[INX]], <bcast_dim_row>) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>, index, index) -> ()
+  // CHECK:  ttkernel.unary_bcast(%[[IN]], %[[INX]], %[[INX]], <bcast_dim_scalar>) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>, index, index) -> ()
+  return
+}

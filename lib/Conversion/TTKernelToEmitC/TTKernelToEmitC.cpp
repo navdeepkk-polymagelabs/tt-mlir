@@ -277,6 +277,20 @@ public:
     return {reduceType, reduceDim};
   }
 
+  template <typename T>
+  StringRef getBroadcastDim(T op) const {
+    switch (op.getBcastDim()) {
+    case ttkernel::BcastDim::Row:
+      return "BroadcastType::ROW";
+    case ttkernel::BcastDim::Col:
+      return "BroadcastType::COL";
+    case ttkernel::BcastDim::Scalar:
+      return "BroadcastType::SCALAR";
+    default:
+      return "BroadcastType::NONE";
+    }
+  }
+
   ArrayAttr getTemplateArgs(Builder &builder, SourceOp op) const {
     if constexpr (std::is_same_v<SourceOp, ttkernel::ReduceInitOp> ||
                   std::is_same_v<SourceOp, ttkernel::ReduceTileOp>) {
@@ -303,10 +317,20 @@ public:
         template_args.push_back(emitc::OpaqueAttr::get(
             op.getContext(), reduceOp.getFullFp32() ? "true" : "false"));
       }
-      template_args.push_back(
-          emitc::OpaqueAttr::get(op.getContext(), reduceType));
-      template_args.push_back(
-          emitc::OpaqueAttr::get(op.getContext(), reduceDim));
+      return ArrayAttr::get(op.getContext(), template_args);
+    } else if (std::is_same_v<SourceOp, ttkernel::UnaryBcastInitOp>) {
+      auto bcastInitOp = mlir::cast<ttkernel::UnaryBcastInitOp>(op);
+      SmallVector<Attribute, 3> template_args;
+      template_args.push_back(emitc::OpaqueAttr::get(
+          op.getContext(),
+          getBroadcastDim<ttkernel::UnaryBcastInitOp>(bcastInitOp)));
+      return ArrayAttr::get(op.getContext(), template_args);
+    } else if (std::is_same_v<SourceOp, ttkernel::UnaryBcastTileOp>) {
+      auto bcastTileOp = mlir::cast<ttkernel::UnaryBcastTileOp>(op);
+      SmallVector<Attribute, 3> template_args;
+      template_args.push_back(emitc::OpaqueAttr::get(
+          op.getContext(),
+          getBroadcastDim<ttkernel::UnaryBcastTileOp>(bcastTileOp)));
       return ArrayAttr::get(op.getContext(), template_args);
     } else if constexpr (std::is_same_v<SourceOp, ttkernel::GetArgValOp> or
                          std::is_same_v<SourceOp,
@@ -861,6 +885,8 @@ public:
         TTKernelToEmitCOpaqueRewriter<ttkernel::TransposeWhDstOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::TypecastTileInitOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::TypecastTileOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::UnaryBcastInitOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::UnaryBcastTileOp>,
 
         TTKernelToEmitCOpaqueRewriter<ttkernel::GetNocAddrOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::NocAsyncReadOp>,

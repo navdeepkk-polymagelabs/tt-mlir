@@ -829,6 +829,9 @@ public:
         TTKernelToEmitCOpaqueRewriter<ttkernel::MulTilesOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::SubTilesInitOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::SubTilesOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::TransposeWhInitOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::TransposeWhInitShortOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::TransposeWhTileOp>,
 
         // SFPU Ops
         TTKernelToEmitCOpaqueRewriter<ttkernel::InitSFPUOp>,

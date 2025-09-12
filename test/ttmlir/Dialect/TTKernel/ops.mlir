@@ -95,6 +95,26 @@ func.func @test_transpose_wh_dest() -> () {
   return
 }
 
+// CHECK-LABEL: func.func @test_transpose_wh_init_short
+func.func @test_transpose_wh_init_short() -> () attributes {ttkernel.arg_spec = #ttkernel.arg_spec< ct_args = [<arg_type = cb_port, operand_index = 0>, <arg_type = cb_port, operand_index = 1>]>} {
+  %input = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>
+  ttkernel.transpose_wh_init_short(%input) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>) -> ()
+  // CHECK: %[[IN:.*]] = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>
+  // CHECK: ttkernel.transpose_wh_init_short(%[[IN]]) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>) -> () 
+  return
+}
+
+// CHECK-LABEL: func.func @test_transpose_wh_tile
+func.func @test_transpose_wh_tile() -> () attributes {ttkernel.arg_spec = #ttkernel.arg_spec< ct_args = [<arg_type = cb_port, operand_index = 0>, <arg_type = cb_port, operand_index = 1>]>} {
+  %input = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>
+  %c0 = arith.constant 0 : index
+  ttkernel.transpose_wh_tile(%input, %c0, %c0) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>, index, index) -> ()
+  // CHECK: %[[IN:.*]] = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>
+  // CHECK: %[[C0:.*]] = arith.constant 0 : index
+  // CHECK: ttkernel.transpose_wh_tile(%[[IN]], %[[C0]], %[[C0]]) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>, index, index) -> ()
+  return
+}
+
 // CHECK-LABEL: func.func @test_get_absolute_logical_x
 func.func @test_get_absolute_logical_x() -> (i8) {
   // CHECK: %[[X:.*]] = ttkernel.get_absolute_logical_x : () -> i8

@@ -352,6 +352,57 @@ def TTKernel_MulTilesOp : TTKernel_FPUOp<"mul_tiles", [TTKernel_BinaryOpTrait]> 
     }];
 }
 
+def TTKernel_TransposeWhInitOp : TTKernel_InitOp<"transpose_wh_init"> {
+    let summary = "Init function for transpose_wh_tile operation.";
+    let description = [{
+      Paired Init function for transpose_wh.
+      For general information on init functions refer to any_init.
+    }];
+
+    let arguments = (ins TTKernel_CB:$in_cb,
+                         TTKernel_CB:$out_cb
+                        );
+
+    let assemblyFormat = [{
+      `(` $in_cb `,` $out_cb `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
+def TTKernel_TransposeWhInitShortOp : TTKernel_InitOp<"transpose_wh_init_short"> {
+    let summary = "Init function for transpose_wh_tile operation.";
+    let description = [{
+      Performs a first-call or switch-from-another-op tile hw
+      reconfiguration step needed for transpose_wh to be executed correctly.
+    }];
+
+    let arguments = (ins TTKernel_CB:$in_cb);
+
+    let assemblyFormat = [{
+      `(` $in_cb `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
+def TTKernel_TransposeWhTileOp : TTKernel_FPUOp<"transpose_wh_tile", [TTKernel_UnaryOpTrait]> {
+    let summary = "Transpose tile operation";
+    let description = [{
+       Performs a 32x32 transpose operation *B[w,h] = A[h,w]* on a tile in the CB
+       at a given index and writes the result to the DST register at index
+       dst_tile_index. The DST register buffer must be in acquired state via
+       *acquire_dst* call.
+
+       This call is blocking and is only available on the compute engine.
+    }];
+
+    let arguments = (ins TTKernel_CB:$in_cb,
+                         IndexLike:$in_tile_index,
+                         IndexLike:$dst_tile_index
+    );
+
+    let assemblyFormat = [{
+      `(` $in_cb `,` $in_tile_index `,` $dst_tile_index `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
 def TTKernel_UnaryBcastInitOp : TTKernel_InitOp<"unary_bcast_init"> {
     let summary = "Init function";
     let description = [{

@@ -65,6 +65,9 @@ public:
       builder->create<emitc::IncludeOp>(loc,
                                         "compute_kernel_api/eltwise_binary.h",
                                         /*isStandard=*/false);
+      builder->create<emitc::IncludeOp>(loc,
+                                        "compute_kernel_api/transpose_wh.h",
+                                        /*isStandard=*/false);
       builder->create<emitc::IncludeOp>(
           loc, "compute_kernel_api/eltwise_binary_sfpu.h",
           /*isStandard=*/false);

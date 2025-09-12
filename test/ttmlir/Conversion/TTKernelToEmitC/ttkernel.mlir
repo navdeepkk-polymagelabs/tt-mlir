@@ -384,6 +384,26 @@ module {
       return
     }
 
+    // CHECK-LABEL: func.func @test_transpose_wh_init_short
+    func.func @test_transpose_wh_init_short() -> () attributes {ttkernel.arg_spec = #ttkernel.arg_spec< ct_args = [<arg_type = cb_port, operand_index = 0>, <arg_type = cb_port, operand_index = 1>]>, ttkernel.thread = #ttkernel.thread<compute>} {
+      %input = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>
+      // CHECK: %[[IN_CB:.*]] = emitc.literal "get_compile_time_arg_val(0)"
+      ttkernel.transpose_wh_init_short(%input) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>) -> ()
+      // CHECK: emitc.call_opaque "transpose_wh_init_short"(%[[IN_CB]])
+      return
+    }
+
+    // CHECK-LABEL: func.func @test_transpose_wh_tile
+    func.func @test_transpose_wh_tile() -> () attributes {ttkernel.arg_spec = #ttkernel.arg_spec< ct_args = [<arg_type = cb_port, operand_index = 0>, <arg_type = cb_port, operand_index = 1>]>, ttkernel.thread = #ttkernel.thread<compute>} {
+      %input = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>
+      // CHECK: %[[IN_CB:.*]] = emitc.literal "get_compile_time_arg_val(0)"
+      %c0 = arith.constant 0 : index
+      // CHECK: %[[DST_INDEX:.*]] = "emitc.constant"
+      ttkernel.transpose_wh_tile(%input, %c0, %c0) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>, index, index) -> ()
+      // CHECK: emitc.call_opaque "transpose_wh_tile"(%[[IN_CB]], %[[DST_INDEX]], %[[DST_INDEX]])
+      return
+    }
+
   } // module
 
   //===----------------------------------------------------------------------===//

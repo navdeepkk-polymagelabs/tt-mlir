@@ -506,6 +506,35 @@ def TTKernel_InitSFPUOp : TTKernel_InitOp<"init_sfpu"> {
     }];
 }
 
+def TTKernel_BinaryMaxTilesInitOp : TTKernel_InitOp<"binary_max_tile_init"> {
+    let summary = "Short init function for `binary_max_tile` operation.";
+    let description = [{
+      Must be run before binary_max_tile.
+    }];
+
+    let arguments = (ins);
+
+    let assemblyFormat = [{
+      `(` `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
+def TTKernel_BinaryMaxTilesOp : TTKernel_SFPUOp<"binary_max_tile", [TTKernel_BinaryOpTrait]> {
+    let summary = "Elementwise binary max operation";
+    let description = [{
+      Performs element-wise computation of maximum operation
+      max(DST[dst0_index], DST[dst1_index]) on DST register operands and stores
+      the result in the DST register with smaller index. The DST register buffer
+      must be in acquired state via *tile_regs_acquire* call.
+    }];
+
+    let arguments = (ins IndexLike:$dst0_index, IndexLike:$dst1_index);
+
+    let assemblyFormat = [{
+      `(` $dst0_index `,` $dst1_index `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
 def TTKernel_CopyDestValuesInitOp : TTKernel_InitOp<"copy_dest_values_init"> {
     let summary = "Short init function";
     let description = [{

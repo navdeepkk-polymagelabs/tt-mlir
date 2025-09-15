@@ -20,6 +20,21 @@ func.func @test_untilize_uninit() -> () attributes {ttkernel.arg_spec = #ttkerne
   return
 }
 
+// CHECK-LABEL: func.func @test_binary_max_tile_init
+func.func @test_binary_max_tile_init() -> () {
+  ttkernel.binary_max_tile_init() : () -> ()
+  // CHECK: ttkernel.binary_max_tile_init() : () -> ()
+  return
+}
+
+// CHECK-LABEL: func.func @test_binary_max_tile
+func.func @test_binary_max_tile() -> () {
+  %c0 = arith.constant 0 : index
+  ttkernel.binary_max_tile(%c0, %c0) : (index, index) -> ()
+  // CHECK: ttkernel.binary_max_tile(%{{.*}}, %{{.*}}) : (index, index) -> ()
+  return
+}
+
 // CHECK-LABEL: func.func @test_add_binary_tile_init
 func.func @test_add_binary_tile_init() -> () {
   ttkernel.add_binary_tile_init() : () -> ()
@@ -100,7 +115,7 @@ func.func @test_transpose_wh_init_short() -> () attributes {ttkernel.arg_spec = 
   %input = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>
   ttkernel.transpose_wh_init_short(%input) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1_>>) -> ()
   // CHECK: %[[IN:.*]] = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>
-  // CHECK: ttkernel.transpose_wh_init_short(%[[IN]]) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>) -> () 
+  // CHECK: ttkernel.transpose_wh_init_short(%[[IN]]) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>) -> ()
   return
 }
 

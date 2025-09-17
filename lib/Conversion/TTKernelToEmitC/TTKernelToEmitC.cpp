@@ -893,6 +893,10 @@ public:
         TTKernelToEmitCOpaqueRewriter<ttkernel::UnaryBcastInitOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::UnaryBcastTileOp>,
 
+        // Data format reconfiguration ops.
+        TTKernelToEmitCOpaqueRewriter<ttkernel::PackReconfigDataFormatOp>,
+        TTKernelToEmitCOpaqueRewriter<ttkernel::ReconfigDataFormatOp>,
+
         TTKernelToEmitCOpaqueRewriter<ttkernel::GetNocAddrOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::NocAsyncReadOp>,
         TTKernelToEmitCOpaqueRewriter<ttkernel::NocAsyncReadTileOp>,

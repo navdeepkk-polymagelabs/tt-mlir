@@ -188,6 +188,42 @@ def TTKernel_TypecastTileOp : TTKernel_SFPUOp<"typecast_tile", [TTKernel_UnaryOp
 }
 
 //===----------------------------------------------------------------------===//
+// TTKernel data format reconfiguration operations
+//===----------------------------------------------------------------------===//
+
+def TTKernel_ReconfigDataFormatOp : TTKernel_Op<"reconfig_data_format"> {
+    let summary = "Math/Unpack data format reconfiguration operation.";
+    let description = [{
+      Reconfigures the data format of `srca` and `srcb` for use by subsequent
+      math/unpack operations to the data format of supplied `icb_srca` and
+      `icb_srcb` respectively. This operation is a no-op if the data format is
+      already configured to the requested data format.
+    }];
+
+    let arguments = (ins TTKernel_CB:$icb_srca,
+                         TTKernel_CB:$icb_srcb);
+
+    let assemblyFormat = [{
+      `(` $icb_srca `,` $icb_srcb `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
+def TTKernel_PackReconfigDataFormatOp : TTKernel_Op<"pack_reconfig_data_format"> {
+    let summary = "Pack reconfigure data format reconfiguration operation.";
+    let description = [{
+      Reconfigures the data format used by subsequent pack operations to the
+      data format of the supplied CB `icb`. This operation is a no-op if the
+      data format is already configured to the requested data format.
+    }];
+
+    let arguments = (ins TTKernel_CB:$icb);
+
+    let assemblyFormat = [{
+      `(` $icb `)` attr-dict `:` functional-type(operands, results)
+    }];
+}
+
+//===----------------------------------------------------------------------===//
 // TTKernel FPU operations
 //===----------------------------------------------------------------------===//
 

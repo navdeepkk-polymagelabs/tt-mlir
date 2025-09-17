@@ -175,3 +175,14 @@ func.func @test_unary_bcast() -> () attributes {ttkernel.arg_spec = #ttkernel.ar
   // CHECK:  ttkernel.unary_bcast(%[[IN]], %[[INX]], %[[INX]], <bcast_dim_scalar>) : (!ttkernel.cb<memref<1x1x!ttcore.tile<32x32, f32>, #l1>>, index, index) -> ()
   return
 }
+
+// CHECK-LABEL: func.func @reconfig_data_format
+func.func @reconfig_data_format() -> () attributes {ttkernel.arg_spec = #ttkernel.arg_spec< ct_args = [<arg_type = cb_port, operand_index = 0>]>} {
+  %0 = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, bf16>, #l1_>>
+  ttkernel.reconfig_data_format(%0, %0) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, bf16>, #l1_>>, !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, bf16>, #l1_>>) -> ()
+  ttkernel.pack_reconfig_data_format(%0) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, bf16>, #l1_>>) -> ()
+  // CHECK:  %[[CB:.*]] = ttkernel.get_compile_time_arg_val(0) : () -> !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, bf16>, #l1>>
+  // CHECK:  ttkernel.reconfig_data_format(%[[CB]], %[[CB]]) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, bf16>, #l1>>, !ttkernel.cb<memref<4x4x!ttcore.tile<32x32, bf16>, #l1>>) -> ()
+  // CHECK:  ttkernel.pack_reconfig_data_format(%[[CB]]) : (!ttkernel.cb<memref<4x4x!ttcore.tile<32x32, bf16>, #l1>>) -> ()
+  return
+}

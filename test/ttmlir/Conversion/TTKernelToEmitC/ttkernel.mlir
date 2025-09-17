@@ -1317,4 +1317,21 @@ module {
 
   } // module
 
+//===----------------------------------------------------------------------===//
+// TTKernel data format reconfiguration operations
+//===----------------------------------------------------------------------===//
+
+module @ttkernel_data_format_reconfiguration_operations {
+  // CHECK-LABEL: func @reconfig_data_format
+  func.func @reconfig_data_format() -> () attributes {ttkernel.arg_spec = #ttkernel.arg_spec< ct_args = [<arg_type = cb_port, operand_index = 0>]>, ttkernel.thread = #ttkernel.thread<compute>} {
+    %cb = "ttkernel.get_compile_time_arg_val"() <{arg_index = 0 : i32}> : () -> !cb0_tiles
+    "ttkernel.reconfig_data_format"(%cb, %cb) : (!cb0_tiles, !cb0_tiles) -> ()
+    "ttkernel.pack_reconfig_data_format"(%cb) : (!cb0_tiles) -> ()
+    // CHECK: %[[CB:.*]] = emitc.literal "get_compile_time_arg_val(0)" : !emitc.opaque<"::tt::CB">
+    // CHECK: emitc.call_opaque "reconfig_data_format"(%[[CB]], %[[CB]]) : (!emitc.opaque<"::tt::CB">, !emitc.opaque<"::tt::CB">) -> ()
+    // CHECK: emitc.call_opaque "pack_reconfig_data_format"(%[[CB]]) : (!emitc.opaque<"::tt::CB">) -> ()
+    return
+  }
+}
+
 } // module

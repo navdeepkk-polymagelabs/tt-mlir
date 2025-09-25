@@ -54,6 +54,8 @@ public:
                                         /*isStandard=*/false);
       builder->create<emitc::IncludeOp>(loc, "compute_kernel_api/common.h",
                                         /*isStandard=*/false);
+      builder->create<emitc::IncludeOp>(loc, "compute_kernel_api/copy_dest_values.h",
+                                        /*isStandard=*/false);
       builder->create<emitc::IncludeOp>(loc, "compute_kernel_api/matmul.h",
                                         /*isStandard=*/false);
       builder->create<emitc::IncludeOp>(loc, "compute_kernel_api/bcast.h",

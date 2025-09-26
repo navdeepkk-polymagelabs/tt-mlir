@@ -95,6 +95,14 @@ func.func @test_copy_dest_values() -> () {
   return
 }
 
+// CHECK-LABEL: func.func @test_exp_tile
+func.func @test_exp_tile() -> () {
+  %c0 = arith.constant 0 : index
+  ttkernel.exp_tile(%c0) {approx, fast_and_approx, scale_enable, skip_positive_check} : (index) -> ()
+  // CHECK: ttkernel.exp_tile(%{{.*}}) {approx, fast_and_approx, scale_enable, skip_positive_check} : (index) -> ()
+  return
+}
+
 // CHECK-LABEL: func.func @test_transpose_wh_dest_init_short
 func.func @test_transpose_wh_dest_init_short() -> () {
   // CHECK: ttkernel.transpose_wh_dest_init_short(true) : () -> ()

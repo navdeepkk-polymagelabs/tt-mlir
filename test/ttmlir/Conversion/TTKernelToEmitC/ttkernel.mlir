@@ -595,8 +595,10 @@ module {
     func.func @exp_tile() -> () attributes {ttkernel.thread = #ttkernel.thread<compute>} {
       // CHECK: %[[DST_INDEX:.*]] = "emitc.constant"
       %dst_index = arith.constant 3 : i32
-      // CHECK: emitc.call_opaque "exp_tile"(%[[DST_INDEX]])
       "ttkernel.exp_tile"(%dst_index) : (i32) -> ()
+      // CHECK: emitc.call_opaque "exp_tile"(%[[DST_INDEX]]) {template_args = [#emitc.opaque<"false">, #emitc.opaque<"false">, #emitc.opaque<"false">, #emitc.opaque<"false">]}
+      "ttkernel.exp_tile"(%dst_index) {approx, fast_and_approx, scale_enable, skip_positive_check} : (i32) -> ()
+      // CHECK: emitc.call_opaque "exp_tile"(%[[DST_INDEX]]) {template_args = [#emitc.opaque<"true">, #emitc.opaque<"true">, #emitc.opaque<"true">, #emitc.opaque<"true">]}
       return
     }
 

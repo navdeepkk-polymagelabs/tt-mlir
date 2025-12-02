@@ -39,6 +39,15 @@ struct StableHLOToTTIRPipelineOptions
       llvm::cl::desc("Enable partial conversion and fallback any unconverted "
                      "and explicitly allow-listed ops to the CPU."),
       llvm::cl::init(true)};
+  Option<bool> enablePartialConversion{
+      *this, "enable-partial-conversion",
+      llvm::cl::desc("If enabled partial conversion is legal."),
+      llvm::cl::init(false)};
+  Option<bool> spmdConversionsOnly{
+      *this, "spmd-conversions-only",
+      llvm::cl::desc(
+          "If enabled only conversions related to SPMD modeling are applied"),
+      llvm::cl::init(false)};
 };
 #endif
 

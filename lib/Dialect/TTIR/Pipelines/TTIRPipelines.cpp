@@ -78,7 +78,9 @@ void createStableHLOToTTIRPipeline(
     pm.addPass(stablehlo::createStablehloAggressiveSimplificationPass());
   }
   ttir::ConvertStableHLOToTTIROptions passOptions;
-  passOptions.enablePartialConversion = options.enableCPUFallback;
+  passOptions.enablePartialConversion =
+      options.enablePartialConversion || options.enableCPUFallback;
+  passOptions.spmdConversionsOnly = options.spmdConversionsOnly;
   pm.addPass(createConvertStableHLOToTTIRPass(passOptions));
 
   if (options.enableCPUFallback) {

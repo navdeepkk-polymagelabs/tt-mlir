@@ -15,7 +15,10 @@ let summary = "Convert StableHLO dialect to TTIR dialect.";
   let options = [
     Option<"enablePartialConversion", "enable-partial-conversion", "bool",
       /*default=*/"false",
-      "Enable partial conversion mode, allowing unconverted ops to remain">
+      "Enable partial conversion mode, allowing unconverted ops to remain">,
+    Option<"spmdConversionsOnly", "spmd-conversions-only", "bool",
+      /*default=*/"false",
+      "If enabled only conversions related to SPMD modeling are applied">
   ];
 }
 def ConvertArithToStableHLO : Pass<"convert-arith-to-stablehlo", "::mlir::ModuleOp"> {

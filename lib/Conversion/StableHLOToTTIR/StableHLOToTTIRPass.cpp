@@ -60,8 +60,8 @@ struct ConvertStableHLOToTTIRPass
     RewritePatternSet patterns(&getContext());
 
     addEmptyOpTypeConversionPattern(&getContext(), patterns, typeConverter);
-    ::mlir::tt::populateStableHLOToTTIRPatterns(&getContext(), patterns,
-                                                typeConverter);
+    ::mlir::tt::populateStableHLOToTTIRPatterns(
+        &getContext(), this->spmdConversionsOnly, patterns, typeConverter);
     populateShardyToTTIRPatterns(&getContext(), patterns, typeConverter);
 
     // Function type conversions.

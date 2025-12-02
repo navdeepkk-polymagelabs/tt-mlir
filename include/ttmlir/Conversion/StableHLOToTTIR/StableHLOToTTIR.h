@@ -19,7 +19,7 @@ namespace ttir {
 
 } // namespace ttir
 
-void populateStableHLOToTTIRPatterns(MLIRContext *ctx,
+void populateStableHLOToTTIRPatterns(MLIRContext *ctx, bool spmdConversionsOnly,
                                      RewritePatternSet &patterns,
                                      TypeConverter &typeConverter);
 

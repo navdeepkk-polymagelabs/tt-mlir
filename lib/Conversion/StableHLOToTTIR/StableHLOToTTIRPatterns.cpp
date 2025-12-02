@@ -5291,9 +5291,13 @@ static void addScaledDotProductAttentionDecodeOpConversionPattern(
 
 namespace mlir::tt {
 
-void populateStableHLOToTTIRPatterns(MLIRContext *ctx,
+void populateStableHLOToTTIRPatterns(MLIRContext *ctx, bool spmdConversionsOnly,
                                      RewritePatternSet &patterns,
                                      TypeConverter &typeConverter) {
+  if (spmdConversionsOnly) {
+    addCCLOpsConversionPattern(ctx, patterns, typeConverter);
+    return;
+  }
   addElementwiseUnaryOpsConversionPatterns(ctx, patterns, typeConverter);
   addElementwiseBinaryOpsConversionPatterns(ctx, patterns, typeConverter);
   addQuantizeOpsConversionPattern(ctx, patterns, typeConverter);

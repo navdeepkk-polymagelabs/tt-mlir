@@ -5,6 +5,7 @@ add_mlir_extension_library(TTMLIRTransforms
         ExtractGPUModules.cpp
         ReenableLostDPS.cpp
         RemoveReturnValues.cpp
+        StripNonStableHLOAttributes.cpp
 
         ADDITIONAL_HEADER_DIRS
         ${PROJECT_SOURCE_DIR}/include/ttmlir

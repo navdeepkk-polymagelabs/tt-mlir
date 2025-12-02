@@ -219,4 +219,11 @@ def ExtractGPUModules: Pass<"extract-gpu-modules", "::mlir::ModuleOp">
   let dependentDialects = ["mlir::LLVM::LLVMDialect"];
 }
 
+def StripNonStableHLOAttributes : Pass<"strip-non-stablehlo-attributes", "::mlir::ModuleOp"> {
+  let summary = "Strip all attribute information on the function arguments and the module";
+  let description = [{
+    This pass removes all attributes from the module and its function arguments.
+  }];
+}
+
 #endif

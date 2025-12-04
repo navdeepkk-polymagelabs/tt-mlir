@@ -6,6 +6,7 @@ add_mlir_extension_library(TTMLIRTransforms
         ReenableLostDPS.cpp
         RemoveReturnValues.cpp
         StripNonStableHLOAttributes.cpp
+        TTIRToStableHLOCustomCall.cpp
 
         ADDITIONAL_HEADER_DIRS
         ${PROJECT_SOURCE_DIR}/include/ttmlir

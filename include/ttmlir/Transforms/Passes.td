@@ -240,4 +240,17 @@ def TTIRToStableHLOCustomCall : Pass<"ttir-to-stablehlo-custom-call", "::mlir::M
   ];
 }
 
+def SerializeToCustomCall
+    : Pass<"serialize-to-custom-call", "::mlir::ModuleOp"> {
+  let summary = "Convert TTIR ops to StableHLO custom calls";
+  let description = [{
+    This pass converts all TTIR operations to StableHLO custom_call operations.
+    The op name becomes the custom_call target name.
+    Op properties are converted to the backend_config dictionary attribute.
+    Inputs and outputs are preserved.
+  }];
+  let dependentDialects = ["::mlir::stablehlo::StablehloDialect",
+                           "::mlir::tt::ttir::TTIRDialect"];
+}
+
 #endif
